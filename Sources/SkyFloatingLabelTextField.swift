@@ -191,6 +191,12 @@ open class SkyFloatingLabelTextField: UITextField { // swiftlint:disable:this ty
     open var titleLabel: UILabel!
 
     // MARK: Properties
+    
+    /// The predicate to validate the label context with
+    open var predicate: () -> Bool = { () -> Bool in true }
+    
+    /// The predefined error message to be set in case the predicate is not fulfilled
+    open var errorMessageHolder: String! = ""
 
     /**
     The formatter used before displaying content in the title label. 
@@ -251,6 +257,11 @@ open class SkyFloatingLabelTextField: UITextField { // swiftlint:disable:this ty
     /// A Boolean value that determines whether the receiver has an error message.
     open var hasErrorMessage: Bool {
         return errorMessage != nil && errorMessage != ""
+    }
+    
+    /// A Boolean value that determines the field holds a valid value
+    open var isValid: Bool {
+        return !hasErrorMessage
     }
 
     fileprivate var _renderingInInterfaceBuilder: Bool = false
@@ -650,6 +661,11 @@ open class SkyFloatingLabelTextField: UITextField { // swiftlint:disable:this ty
 
         titleLabel.frame = titleLabelRectForBounds(bounds, editing: isTitleVisible() || _renderingInInterfaceBuilder)
         lineView.frame = lineViewRectForBounds(bounds, editing: editingOrSelected || _renderingInInterfaceBuilder)
+    }
+    
+    /// apply predicate
+    open func validate() {
+        errorMessage = predicate() ? nil : errorMessageHolder
     }
 
     /**
